@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#090b12">
-    <title>かずきゃら　もちもちサイト</title>
+    <title>かずきゃら　もちもちサイト２</title>
     <style>
         :root {
             color-scheme: dark;
@@ -50,7 +50,7 @@
         .menu-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
         .menu-heading span:first-child { color: rgba(255,255,255,.84); font-size: 10px; font-weight: 800; letter-spacing: .2em; }
         .menu-heading span:last-child { color: rgba(255,255,255,.56); font-size: 9px; letter-spacing: .16em; }
-        .menu-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+        .menu-grid { display: grid; width: 80%; margin: 0 auto; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
         .menu-card { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; overflow: hidden; border: 2px solid rgba(255,255,255,.78); border-radius: 0; background: transparent; color: white; text-align: left; cursor: pointer; box-shadow: 0 12px 36px rgba(0,0,0,.28); transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease; }
         .menu-card:hover, .menu-card:focus-visible { z-index: 1; transform: translateY(-7px) scale(1.04); border-color: var(--lime); box-shadow: 0 16px 42px rgba(0,0,0,.4), 0 0 0 2px var(--lime); outline: none; }
         .menu-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: transform .5s ease; }
@@ -69,6 +69,10 @@
         .detail { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(280px, .78fr) minmax(430px, 1.22fr); align-items: center; gap: 5vw; padding: 100px clamp(28px, 9vw, 145px) 70px; opacity: 0; visibility: hidden; transform: translateX(20px); transition: opacity .45s ease, transform .45s ease, visibility .45s; }
         .detail.is-active { opacity: 1; visibility: visible; transform: translateX(0); }
         .character-detail { grid-template-columns: 1fr; justify-items: center; gap: clamp(8px, 1.8vh, 16px); padding: 76px 24px 18px; }
+        .character-instruction { position: relative; margin: 0; padding: 10px 30px 11px; border: 1px solid #ffe07e; border-radius: 999px; background: #5b3a1c; color: #ffe89b; font-size: clamp(15px, 1.8vw, 22px); font-weight: 900; letter-spacing: .08em; line-height: 1.2; text-align: center; text-shadow: 0 2px 0 #3d2000, 0 0 18px #ffd657; box-shadow: 0 8px 24px #241406, inset 0 0 18px #8a6124; }
+        .character-instruction::before, .character-instruction::after { position: absolute; top: 50%; color: #d5ff65; font-size: .7em; text-shadow: 0 0 12px #d5ff65; transform: translateY(-50%); }
+        .character-instruction::before { content: "✦"; left: 12px; }
+        .character-instruction::after { content: "✦"; right: 12px; }
         .character-detail .character-stage { display: flex; align-items: center; justify-content: center; gap: clamp(18px, 4vw, 58px); width: 100%; perspective: 1800px; }
         .character-frame { position: relative; display: grid; place-items: center; width: min(62vw, 760px, calc(100% - 152px)); height: min(55vh, 560px); min-height: 0; overflow: hidden; padding: clamp(10px, 1.6vw, 22px); border: 1px solid rgba(232, 218, 160, .9); background: linear-gradient(135deg, rgba(255,255,255,.22), transparent 16%, rgba(255,255,255,.04) 50%, rgba(0,0,0,.18)), rgba(13,16,23,.28); box-shadow: 0 20px 70px rgba(0,0,0,.38), inset 0 0 0 5px rgba(232,218,160,.12), inset 0 0 0 6px rgba(255,255,255,.35); }
         .character-frame::before, .character-frame::after { content: "✦"; position: absolute; z-index: 2; display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid rgba(232,218,160,.75); border-radius: 50%; background: #171a20; color: #f2df9b; font-size: 11px; box-shadow: 0 0 16px rgba(232,218,160,.28); }
@@ -78,6 +82,8 @@
         .character-frame .frame-corner:nth-child(1) { top: 8px; right: 8px; border-width: 1px 1px 0 0; }
         .character-frame .frame-corner:nth-child(2) { bottom: 8px; left: 8px; border-width: 0 0 1px 1px; }
         .character-detail .character-portrait { display: block; width: 100%; height: 100%; min-width: 0; min-height: 0; max-width: 100%; max-height: 100%; object-fit: contain; transform-origin: left center; backface-visibility: hidden; }
+        .character-intro-portrait { cursor: pointer; }
+        .character-intro-portrait:focus-visible { outline: 3px solid var(--lime); outline-offset: -3px; }
         .character-frame.is-turning-next .character-portrait { animation: character-slide-next .48s ease both; }
         .character-frame.is-turning-prev .character-portrait { animation: character-slide-prev .48s ease both; }
         @keyframes character-slide-next { 0% { opacity: 0; transform: translateX(34px); } 100% { opacity: 1; transform: translateX(0); } }
@@ -89,6 +95,16 @@
         .character-picker button[aria-pressed="true"], .character-picker button:hover { border-color: var(--lime); background: var(--lime); color: #12160d; }
         .character-detail > .back-button { margin-top: 4px; padding: 10px 16px; border: 1px solid rgba(255,255,255,.72); background: rgba(0,0,0,.25); color: white; }
         .character-detail > .back-button:hover { border-color: var(--lime); color: var(--lime); }
+        .character-detail-secondary { color: #f6e5c4; background: transparent; }
+        .character-detail-secondary .character-frame { border: 8px solid #6d3e20; background: linear-gradient(135deg, rgba(255,221,160,.24), transparent 18%, rgba(255,185,95,.08) 48%, rgba(37,15,6,.42)), repeating-linear-gradient(8deg, rgba(255,211,142,.12) 0 2px, rgba(61,27,10,.2) 3px 7px, transparent 8px 17px), #4a2814; box-shadow: 0 22px 62px rgba(24,8,1,.58), inset 0 0 0 3px rgba(239,178,99,.58), inset 0 0 0 8px rgba(37,14,5,.55); }
+        .character-detail-secondary .character-frame::before, .character-detail-secondary .character-frame::after { border-color: rgba(237,185,111,.82); background: #3d1d0d; color: #f1c47f; box-shadow: 0 0 16px rgba(225,157,75,.28); }
+        .character-detail-secondary .character-frame .frame-corner { border-color: rgba(244,198,127,.92); }
+        .character-detail-secondary .character-arrow { border: 2px solid #9a6336; background: linear-gradient(145deg, #8c572e, #4e2915); color: #ffe6b5; box-shadow: 0 4px 0 #301609, 0 8px 18px rgba(28,9,1,.35); }
+        .character-detail-secondary .character-arrow:hover { border-color: #f0c27d; background: linear-gradient(145deg, #b8783e, #6e3b1d); color: #fff1d2; }
+        .character-detail-secondary .character-picker button { border: 2px solid #956035; background: linear-gradient(145deg, #70421f, #3d1e0e); color: #f5d29a; box-shadow: 0 3px 0 #2d1307; }
+        .character-detail-secondary .character-picker button[aria-pressed="true"], .character-detail-secondary .character-picker button:hover { border-color: #f0c27d; background: linear-gradient(145deg, #b8783e, #70401f); color: #fff2d2; }
+        .character-detail-secondary > .back-button { border: 2px solid #956035; background: linear-gradient(145deg, #70421f, #3d1e0e); color: #f5d29a; box-shadow: 0 3px 0 #2d1307; }
+        .character-detail-secondary > .back-button:hover { border-color: #f0c27d; background: linear-gradient(145deg, #b8783e, #70401f); color: #fff2d2; }
         .game-board-detail { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 74px 24px 28px; }
         .case-board { position: relative; width: min(78vw, 74vh, 920px); aspect-ratio: 1; flex: none; background: url("images/case.webp") center / contain no-repeat; }
         .case-play-area { position: absolute; inset: 12% 10% 10.5% 10.5%; overflow: hidden; touch-action: none; cursor: crosshair; }
@@ -100,6 +116,21 @@
         .wallpaper-image { display: block; width: min(88vw, 1200px); height: min(72vh, 760px); object-fit: contain; }
         .wallpaper-back { min-width: 190px; min-height: 56px; padding: 12px 24px; border: 2px solid #765238; border-radius: 999px; background: #d8bd9c; color: #000; font-size: 22px; font-weight: 800; box-shadow: 0 4px 0 #765238, 0 7px 14px rgba(0,0,0,.2); }
         .wallpaper-back:hover { background: #ead5b8; color: #000; }
+        .ball-game-detail { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 72px 20px 22px; }
+        .ball-game-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: min(92vw, 760px); padding: 12px 16px; border: 1px solid rgba(200,255,77,.78); border-radius: 12px; background: linear-gradient(135deg, rgba(11,18,29,.92), rgba(28,35,47,.78)); color: white; box-shadow: 0 10px 28px rgba(0,0,0,.3), inset 0 0 0 1px rgba(255,255,255,.08); }
+        .ball-game-header h2 { margin: 0; color: var(--lime); font-size: clamp(20px, 3vw, 32px); line-height: 1.15; text-shadow: 0 2px 14px rgba(200,255,77,.28); }
+        .ball-game-menu { flex: none; padding: 10px 14px; border: 1px solid rgba(255,255,255,.72); border-radius: 7px; background: rgba(0,0,0,.34); color: white; }
+        .ball-game-menu:hover { border-color: var(--lime); color: var(--lime); }
+        .ball-game { position: relative; width: min(92vw, 760px); height: min(68vh, 600px); min-height: 360px; overflow: hidden; border: 2px solid rgba(255,255,255,.72); background: linear-gradient(180deg, rgba(8,12,24,.48), rgba(8,12,24,.82)); box-shadow: 0 20px 60px rgba(0,0,0,.36); touch-action: none; cursor: crosshair; }
+        .ball-game canvas { display: block; width: 100%; height: 100%; }
+        .ball-game-hint { position: absolute; top: 14px; left: 50%; margin: 0; color: rgba(255,255,255,.76); font-size: 11px; letter-spacing: .08em; transform: translateX(-50%); pointer-events: none; }
+        .ball-game-over { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(5,7,13,.72); }
+        .ball-game-over[hidden] { display: none; }
+        .ball-game-over-panel { display: grid; gap: 14px; min-width: min(80%, 330px); padding: 26px; border: 1px solid rgba(200,255,77,.8); background: rgba(12,16,25,.94); text-align: center; box-shadow: 0 18px 50px rgba(0,0,0,.4); }
+        .ball-game-over-panel h3 { margin: 0; color: var(--lime); font-size: 28px; }
+        .ball-game-over-panel p { margin: 0; color: rgba(255,255,255,.76); font-size: 13px; }
+        .ball-game-retry { padding: 12px 18px; border: 0; background: var(--lime); color: #12160d; font-weight: 900; cursor: pointer; }
+        .ball-game-retry:hover { filter: brightness(1.1); }
         .detail-copy { max-width: 460px; }
         .detail-number { color: var(--lime); font-size: 12px; font-weight: 900; letter-spacing: .22em; }
         .detail h2 { margin: 16px 0; font-size: clamp(38px, 5vw, 68px); line-height: 1.12; letter-spacing: -.045em; }
@@ -165,36 +196,31 @@
     <div id="loading-screen" aria-label="読み込み中"><img src="images/loading.GIF" alt="読み込み中"></div>
 
     <main class="site" id="site">
-        <div class="backdrop" aria-hidden="true"><img src="images/backgrond.jpg" alt=""></div>
+        <div class="backdrop" aria-hidden="true"><img src="images/background2.PNG" alt=""></div>
         <div class="grain" aria-hidden="true"></div>
         <header class="topbar">
             <span class="top-note">A world made for play</span>
         </header>
 
         <section class="landing" id="landing" aria-label="メインメニュー">
-            <div class="intro">
-                <div class="kicker">Independent Game Studio</div>
-                <h1>物語の中へ、<br>飛び込もう。</h1>
-                <p>ここから、ゲームの世界が広がる。気になるメニューを選んで、INDIE FORGEの世界をお楽しみください。</p>
-                <div class="scroll-cue"><i></i> CHOOSE YOUR DESTINATION</div>
-            </div>
             <div class="menu-area">
                 <div class="menu-heading" aria-hidden="true"></div>
                 <div class="menu-grid">
-                    <button class="menu-card" type="button" data-menu="0" aria-label="キャラ紹介"><img src="images/menu01.webp" alt=""><span class="menu-label"><strong>キャラ紹介</strong></span></button>
-                    <a class="menu-card" href="https://www.youtube.com/playlist?list=PLOLLthl9eMs8&amp;playnext=1&amp;index=1" target="_blank" rel="noopener noreferrer" aria-label="BGMプレイリストを新しいタブで開く"><img src="images/menu02.webp" alt=""><span class="menu-label"><strong>BGM</strong></span></a>
-                    <button class="menu-card" type="button" data-menu="2" aria-label="コロコロKS"><img src="images/menu03.webp" alt=""><span class="menu-label"><strong>コロコロKS</strong></span></button>
-                    <button class="menu-card" type="button" data-menu="3" aria-label="壁紙"><img src="images/menu04.webp" alt=""><span class="menu-label"><strong>壁紙</strong></span></button>
+                    <button class="menu-card" type="button" data-menu="0" aria-label="キャラ紹介"><img src="images/button1.PNG" alt="キャラ紹介"></button>
+                    <button class="menu-card" type="button" data-menu="5" aria-label="キャラクター一覧"><img src="images/button2.PNG" alt="キャラクター一覧"></button>
+                    <button class="menu-card" type="button" data-menu="6" aria-label="メニュー03"><img src="images/button3.PNG" alt="メニュー03"></button>
+                    <button class="menu-card" type="button" data-menu="4" aria-label="メニュー04"><img src="images/menu04.PNG" alt="メニュー04"></button>
                 </div>
             </div>
         </section>
 
         <section class="detail character-detail" data-detail="0" aria-label="キャラクター紹介" aria-hidden="true">
+            <p class="character-instruction">クリックしてほっぺを引っ張ろう</p>
             <div class="character-stage">
                 <button class="character-arrow" type="button" data-character-step="-1" aria-label="前のキャラクター">‹</button>
                 <div class="character-frame" id="character-frame">
                     <span class="frame-corner" aria-hidden="true"></span><span class="frame-corner" aria-hidden="true"></span>
-                    <img class="character-portrait" id="character-portrait" src="images/kazu01.jpg" alt="キャラクター01">
+                    <img class="character-portrait character-intro-portrait" id="character-portrait" src="images/menu01/01-01.GIF" alt="キャラクター01。タップするとアニメーションします" role="button" tabindex="0" aria-label="キャラクター01。タップしてアニメーションを再生">
                 </div>
                 <button class="character-arrow" type="button" data-character-step="1" aria-label="次のキャラクター">›</button>
             </div>
@@ -230,9 +256,66 @@
             <button class="back-button wallpaper-back" type="button">← メニューに戻る</button>
         </section>
 
-        <section class="detail" data-detail="4" aria-label="その他">
-            <div class="detail-copy"><div class="detail-number">04 / CONTACT</div><h2>一緒にゲームを<br>つくりませんか？</h2><p>開発に関するお問い合わせ、協業のご相談などはこちらからご連絡ください。INDIE FORGEチームより折り返しご連絡します。</p><div class="detail-actions"><a class="detail-link" href="mailto:hello@indie-forge.example">メールでお問い合わせ ↗</a><button class="back-button" type="button">← MENU</button></div></div>
-            <div class="feature-image"><img src="images/menu04.webp" alt="お問い合わせのイメージ"></div>
+        <section class="detail ball-game-detail" data-detail="4" aria-label="ボール積み上げゲーム">
+            <div class="ball-game-header">
+                <h2>ボールを積み上げよう</h2>
+                <button class="back-button ball-game-menu" type="button">← MENU</button>
+            </div>
+            <div class="ball-game" id="ball-game" aria-label="ボール積み上げゲームの台">
+                <canvas id="ball-game-canvas"></canvas>
+                <p class="ball-game-hint">タップした位置からボールが落ちます</p>
+                <div class="ball-game-over" id="ball-game-over" hidden>
+                    <div class="ball-game-over-panel">
+                        <h3>GAME OVER</h3>
+                        <p>ボールが台から落ちました。</p>
+                        <button class="ball-game-retry" id="ball-game-retry" type="button">リトライ</button>
+                        <button class="back-button" type="button">← メインメニュー</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="detail character-detail character-detail-secondary" data-detail="5" aria-label="キャラクター一覧" aria-hidden="true">
+            <div class="character-stage">
+                <button class="character-arrow" type="button" data-secondary-character-step="-1" aria-label="前のキャラクター">‹</button>
+                <div class="character-frame" id="secondary-character-frame">
+                    <span class="frame-corner" aria-hidden="true"></span><span class="frame-corner" aria-hidden="true"></span>
+                    <img class="character-portrait" id="secondary-character-portrait" src="images/character01.jpg" alt="キャラクター01">
+                </div>
+                <button class="character-arrow" type="button" data-secondary-character-step="1" aria-label="次のキャラクター">›</button>
+            </div>
+            <div class="character-picker" aria-label="キャラクター選択">
+                <button type="button" data-secondary-character="0" aria-label="キャラクター01" aria-pressed="true">01</button>
+                <button type="button" data-secondary-character="1" aria-label="キャラクター02" aria-pressed="false">02</button>
+                <button type="button" data-secondary-character="2" aria-label="キャラクター03" aria-pressed="false">03</button>
+                <button type="button" data-secondary-character="3" aria-label="キャラクター04" aria-pressed="false">04</button>
+                <button type="button" data-secondary-character="4" aria-label="キャラクター05" aria-pressed="false">05</button>
+                <button type="button" data-secondary-character="5" aria-label="キャラクター06" aria-pressed="false">06</button>
+                <button type="button" data-secondary-character="6" aria-label="キャラクター07" aria-pressed="false">07</button>
+                <button type="button" data-secondary-character="7" aria-label="キャラクター08" aria-pressed="false">08</button>
+                <button type="button" data-secondary-character="8" aria-label="キャラクター09" aria-pressed="false">09</button>
+            </div>
+            <button class="back-button" type="button" data-secondary-character-back>← MENU</button>
+        </section>
+
+        <section class="detail character-detail" data-detail="6" aria-label="メニュー03スライド" aria-hidden="true">
+            <div class="character-stage">
+                <button class="character-arrow" type="button" data-tertiary-slide-step="-1" aria-label="前のスライド">‹</button>
+                <div class="character-frame" id="tertiary-slide-frame">
+                    <span class="frame-corner" aria-hidden="true"></span><span class="frame-corner" aria-hidden="true"></span>
+                    <img class="character-portrait" id="tertiary-slide-portrait" src="images/menu03/image01.PNG" alt="スライド01">
+                </div>
+                <button class="character-arrow" type="button" data-tertiary-slide-step="1" aria-label="次のスライド">›</button>
+            </div>
+            <div class="character-picker" aria-label="スライド選択">
+                <button type="button" data-tertiary-slide="0" aria-label="スライド01" aria-pressed="true">01</button>
+                <button type="button" data-tertiary-slide="1" aria-label="スライド02" aria-pressed="false">02</button>
+                <button type="button" data-tertiary-slide="2" aria-label="スライド03" aria-pressed="false">03</button>
+                <button type="button" data-tertiary-slide="3" aria-label="スライド04" aria-pressed="false">04</button>
+                <button type="button" data-tertiary-slide="4" aria-label="スライド05" aria-pressed="false">05</button>
+                <button type="button" data-tertiary-slide="5" aria-label="スライド06" aria-pressed="false">06</button>
+            </div>
+            <button class="back-button" type="button" data-tertiary-slide-back>← MENU</button>
         </section>
 
         <div class="side-index" aria-hidden="true">SCROLL TO EXPLORE</div>
@@ -283,20 +366,190 @@
         });
         ballAnimationFrame = requestAnimationFrame(animateBall);
 
+        const ballGame = document.getElementById('ball-game');
+        const ballGameCanvas = document.getElementById('ball-game-canvas');
+        const ballGameContext = ballGameCanvas.getContext('2d');
+        const ballGameImage = new Image();
+        ballGameImage.src = 'images/ball.PNG';
+        const ballGameState = { balls: [], width: 0, height: 0, gameOver: false };
+        const BALL_RADIUS = 27;
+        const BALL_GRAVITY = 980;
+
+        function resizeBallGame() {
+            const bounds = ballGame.getBoundingClientRect();
+            const pixelRatio = window.devicePixelRatio || 1;
+            ballGameState.width = bounds.width;
+            ballGameState.height = bounds.height;
+            ballGameCanvas.width = Math.round(bounds.width * pixelRatio);
+            ballGameCanvas.height = Math.round(bounds.height * pixelRatio);
+            ballGameContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        }
+
+        function resetBallGame() {
+            ballGameState.balls = [];
+            ballGameState.gameOver = false;
+            document.getElementById('ball-game-over').hidden = true;
+            resizeBallGame();
+        }
+
+        function spawnBall(event) {
+            if (ballGameState.gameOver) return;
+            const bounds = ballGameCanvas.getBoundingClientRect();
+            const x = Math.max(BALL_RADIUS, Math.min(ballGameState.width - BALL_RADIUS, event.clientX - bounds.left));
+            ballGameState.balls.push({ x, y: -BALL_RADIUS, vx: 0, vy: 0, angle: 0, angularVelocity: 0 });
+        }
+
+        function resolveBallCollisions() {
+            const platformY = ballGameState.height - 38;
+            const platformLeft = ballGameState.width * .14;
+            const platformRight = ballGameState.width * .86;
+            for (const ball of ballGameState.balls) {
+                if (ball.y + BALL_RADIUS >= platformY && ball.x >= platformLeft - BALL_RADIUS && ball.x <= platformRight + BALL_RADIUS && ball.vy > 0) {
+                    ball.y = platformY - BALL_RADIUS;
+                    ball.vy *= -.2;
+                    ball.vx *= .93;
+                    ball.angularVelocity += (ball.vx / BALL_RADIUS) * .025;
+                }
+            }
+            for (let first = 0; first < ballGameState.balls.length; first += 1) {
+                for (let second = first + 1; second < ballGameState.balls.length; second += 1) {
+                    const a = ballGameState.balls[first];
+                    const b = ballGameState.balls[second];
+                    const dx = b.x - a.x;
+                    const dy = b.y - a.y;
+                    const distance = Math.hypot(dx, dy) || 0.001;
+                    const minimumDistance = BALL_RADIUS * 2;
+                    if (distance >= minimumDistance) continue;
+                    const nx = dx / distance;
+                    const ny = dy / distance;
+                    const overlap = (minimumDistance - distance) / 2;
+                    a.x -= nx * overlap;
+                    a.y -= ny * overlap;
+                    b.x += nx * overlap;
+                    b.y += ny * overlap;
+                    const relativeVelocity = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+                    if (relativeVelocity < 0) {
+                        const impulse = relativeVelocity * -.32;
+                        a.vx -= impulse * nx;
+                        a.vy -= impulse * ny;
+                        b.vx += impulse * nx;
+                        b.vy += impulse * ny;
+                        const tx = -ny;
+                        const ty = nx;
+                        const tangentVelocity = (b.vx - a.vx) * tx + (b.vy - a.vy) * ty;
+                        const rollingImpulse = tangentVelocity * .02;
+                        a.vx += rollingImpulse * tx;
+                        a.vy += rollingImpulse * ty;
+                        b.vx -= rollingImpulse * tx;
+                        b.vy -= rollingImpulse * ty;
+                        a.angularVelocity -= tangentVelocity / BALL_RADIUS * .012;
+                        b.angularVelocity += tangentVelocity / BALL_RADIUS * .012;
+                    }
+                }
+            }
+        }
+
+        function setBallGameOver() {
+            ballGameState.gameOver = true;
+            document.getElementById('ball-game-over').hidden = false;
+        }
+
+        function drawBallGame() {
+            const { width, height } = ballGameState;
+            ballGameContext.clearRect(0, 0, width, height);
+            const platformLeft = width * .14;
+            const platformWidth = width * .72;
+            const platformY = height - 38;
+            ballGameContext.fillStyle = '#d8bd9c';
+            ballGameContext.fillRect(platformLeft, platformY, platformWidth, 22);
+            ballGameContext.fillStyle = '#765238';
+            ballGameContext.fillRect(platformLeft, platformY + 22, platformWidth, 8);
+            for (const ball of ballGameState.balls) {
+                if (ballGameImage.complete && ballGameImage.naturalWidth > 0) {
+                    ballGameContext.save();
+                    ballGameContext.translate(ball.x, ball.y);
+                    ballGameContext.rotate(ball.angle);
+                    ballGameContext.drawImage(ballGameImage, -BALL_RADIUS, -BALL_RADIUS, BALL_RADIUS * 2, BALL_RADIUS * 2);
+                    ballGameContext.restore();
+                } else {
+                    ballGameContext.beginPath();
+                    ballGameContext.arc(ball.x, ball.y, BALL_RADIUS, 0, Math.PI * 2);
+                    ballGameContext.fillStyle = '#d7d7d7';
+                    ballGameContext.fill();
+                }
+            }
+        }
+
+        function animateBallGame(timestamp) {
+            const previousTime = animateBallGame.previousTime || timestamp;
+            const deltaTime = Math.min((timestamp - previousTime) / 1000, .032);
+            animateBallGame.previousTime = timestamp;
+            if (document.querySelector('.ball-game-detail.is-active') && !ballGameState.gameOver) {
+                const step = deltaTime / 3;
+                for (let iteration = 0; iteration < 3; iteration += 1) {
+                    for (const ball of ballGameState.balls) {
+                        ball.vy += BALL_GRAVITY * step;
+                        ball.vx *= .999;
+                        ball.angularVelocity *= .96;
+                        ball.x += ball.vx * step;
+                        ball.y += ball.vy * step;
+                        ball.angle += ball.angularVelocity * step;
+                    }
+                    resolveBallCollisions();
+                }
+                if (ballGameState.balls.some(ball => ball.y - BALL_RADIUS > ballGameState.height + 12)) setBallGameOver();
+            }
+            drawBallGame();
+            requestAnimationFrame(animateBallGame);
+        }
+
+        ballGame.addEventListener('pointerdown', spawnBall);
+        document.getElementById('ball-game-retry').addEventListener('click', resetBallGame);
+        window.addEventListener('resize', resizeBallGame);
+        resizeBallGame();
+        requestAnimationFrame(animateBallGame);
+
         const characterImages = [
-            'images/kazu01.jpg', 'images/kazu02.jpg', 'images/kazu03.jpg', 'images/kazu04.jpg',
-            'images/kazu05.jpg', 'images/kazu06.jpg', 'images/kazu07.jpg', 'images/kazu08.jpg'
+            'images/menu01/01-01.GIF', 'images/menu01/02-01.GIF', 'images/menu01/03-01.GIF', 'images/menu01/04-01.GIF',
+            'images/menu01/05-01.GIF', 'images/menu01/06-01.GIF', 'images/menu01/07-01.GIF', 'images/menu01/08-01.GIF'
         ];
+        const characterIntroAnimations = {
+            0: { animation: 'images/menu01/01-02.GIF', duration: 910 },
+            1: { animation: 'images/menu01/02-02.GIF', duration: 840 },
+            2: { animation: 'images/menu01/03-02.GIF', duration: 910 },
+            3: { animation: 'images/menu01/04-02.GIF', duration: 770 },
+            4: { animation: 'images/menu01/05-02.GIF', duration: 1190 },
+            5: { animation: 'images/menu01/06-02.GIF', duration: 980 },
+            6: { animation: 'images/menu01/07-02.GIF', duration: 1050 },
+            7: { animation: 'images/menu01/08-02.GIF', duration: 700 }
+        };
         let currentCharacter = 0;
+        let characterIntroTimer = 0;
+        let isCharacterIntroPlaying = false;
+        const secondaryCharacterImages = [
+            'images/character01.jpg', 'images/character02.jpg', 'images/character03.jpg', 'images/character04.jpg',
+            'images/character05.jpg', 'images/character06.jpg', 'images/character07.jpg', 'images/character08.jpg',
+            'images/character09.jpg'
+        ];
+        let currentSecondaryCharacter = 0;
+        const tertiarySlideImages = [
+            'images/menu03/image01.PNG', 'images/menu03/image02.PNG', 'images/menu03/image03.PNG',
+            'images/menu03/image04.PNG', 'images/menu03/image05.PNG', 'images/menu03/image06.PNG'
+        ];
+        let currentTertiarySlide = 0;
 
         function selectCharacter(index, direction = 1) {
             currentCharacter = (index + characterImages.length) % characterImages.length;
             const portrait = document.getElementById('character-portrait');
             const frame = document.getElementById('character-frame');
+            window.clearTimeout(characterIntroTimer);
+            isCharacterIntroPlaying = false;
             frame.classList.remove('is-turning-next', 'is-turning-prev');
             void portrait.offsetWidth;
             portrait.src = characterImages[currentCharacter];
-            portrait.alt = `キャラクター${String(currentCharacter + 1).padStart(2, '0')}`;
+            portrait.alt = characterIntroAnimations[currentCharacter]
+                ? `キャラクター${String(currentCharacter + 1).padStart(2, '0')}。タップするとアニメーションします`
+                : `キャラクター${String(currentCharacter + 1).padStart(2, '0')}`;
             frame.classList.add(direction < 0 ? 'is-turning-prev' : 'is-turning-next');
             window.setTimeout(() => frame.classList.remove('is-turning-next', 'is-turning-prev'), 500);
             document.querySelectorAll('[data-character]').forEach(button => {
@@ -304,8 +557,51 @@
             });
         }
 
+        function playCharacterIntro() {
+            const introAnimation = characterIntroAnimations[currentCharacter];
+            if (!introAnimation || isCharacterIntroPlaying) return;
+            const portrait = document.getElementById('character-portrait');
+            isCharacterIntroPlaying = true;
+            portrait.src = introAnimation.animation;
+            characterIntroTimer = window.setTimeout(() => {
+                portrait.src = characterImages[currentCharacter];
+                isCharacterIntroPlaying = false;
+            }, introAnimation.duration);
+        }
+
+        function selectSecondaryCharacter(index, direction = 1) {
+            currentSecondaryCharacter = (index + secondaryCharacterImages.length) % secondaryCharacterImages.length;
+            const portrait = document.getElementById('secondary-character-portrait');
+            const frame = document.getElementById('secondary-character-frame');
+            frame.classList.remove('is-turning-next', 'is-turning-prev');
+            void portrait.offsetWidth;
+            portrait.src = secondaryCharacterImages[currentSecondaryCharacter];
+            portrait.alt = `キャラクター${String(currentSecondaryCharacter + 1).padStart(2, '0')}`;
+            frame.classList.add(direction < 0 ? 'is-turning-prev' : 'is-turning-next');
+            window.setTimeout(() => frame.classList.remove('is-turning-next', 'is-turning-prev'), 500);
+            document.querySelectorAll('[data-secondary-character]').forEach(button => {
+                button.setAttribute('aria-pressed', Number(button.dataset.secondaryCharacter) === currentSecondaryCharacter ? 'true' : 'false');
+            });
+        }
+
+        function selectTertiarySlide(index, direction = 1) {
+            currentTertiarySlide = (index + tertiarySlideImages.length) % tertiarySlideImages.length;
+            const portrait = document.getElementById('tertiary-slide-portrait');
+            const frame = document.getElementById('tertiary-slide-frame');
+            frame.classList.remove('is-turning-next', 'is-turning-prev');
+            void portrait.offsetWidth;
+            portrait.src = tertiarySlideImages[currentTertiarySlide];
+            portrait.alt = `スライド${String(currentTertiarySlide + 1).padStart(2, '0')}`;
+            frame.classList.add(direction < 0 ? 'is-turning-prev' : 'is-turning-next');
+            window.setTimeout(() => frame.classList.remove('is-turning-next', 'is-turning-prev'), 500);
+            document.querySelectorAll('[data-tertiary-slide]').forEach(button => {
+                button.setAttribute('aria-pressed', Number(button.dataset.tertiarySlide) === currentTertiarySlide ? 'true' : 'false');
+            });
+        }
+
         function openMenu(index) {
             landing.classList.add('is-away');
+            if (index === 4) resetBallGame();
             details.forEach((detail, i) => {
                 detail.classList.toggle('is-active', i === index);
                 detail.setAttribute('aria-hidden', i === index ? 'false' : 'true');
@@ -324,11 +620,31 @@
             button.addEventListener('click', () => openMenu(Number(button.dataset.menu)));
         });
         document.querySelectorAll('[data-character]').forEach(button => button.addEventListener('click', () => selectCharacter(Number(button.dataset.character))));
+        const characterPortrait = document.getElementById('character-portrait');
+        characterPortrait.addEventListener('click', playCharacterIntro);
+        characterPortrait.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                playCharacterIntro();
+            }
+        });
         document.querySelectorAll('[data-character-step]').forEach(button => button.addEventListener('click', () => {
             const direction = Number(button.dataset.characterStep);
             selectCharacter(currentCharacter + direction, direction);
         }));
+        document.querySelectorAll('[data-secondary-character]').forEach(button => button.addEventListener('click', () => selectSecondaryCharacter(Number(button.dataset.secondaryCharacter))));
+        document.querySelectorAll('[data-secondary-character-step]').forEach(button => button.addEventListener('click', () => {
+            const direction = Number(button.dataset.secondaryCharacterStep);
+            selectSecondaryCharacter(currentSecondaryCharacter + direction, direction);
+        }));
+        document.querySelectorAll('[data-tertiary-slide]').forEach(button => button.addEventListener('click', () => selectTertiarySlide(Number(button.dataset.tertiarySlide))));
+        document.querySelectorAll('[data-tertiary-slide-step]').forEach(button => button.addEventListener('click', () => {
+            const direction = Number(button.dataset.tertiarySlideStep);
+            selectTertiarySlide(currentTertiarySlide + direction, direction);
+        }));
         document.querySelector('[data-character-back]').addEventListener('click', showMenu);
+        document.querySelector('[data-secondary-character-back]').addEventListener('click', showMenu);
+        document.querySelector('[data-tertiary-slide-back]').addEventListener('click', showMenu);
         document.querySelectorAll('.back-button').forEach(button => button.addEventListener('click', showMenu));
         document.addEventListener('keydown', event => { if (event.key === 'Escape') showMenu(); });
 

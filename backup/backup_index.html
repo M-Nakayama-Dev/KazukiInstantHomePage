@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090b12">
+    <title>かずきゃら　もちもちサイト</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+            --lime: #c8ff4d;
+            --white: #f7f8fb;
+        }
+        * { box-sizing: border-box; }
+        html, body { width: 100%; min-height: 100%; margin: 0; }
+        body { background: #090b12; color: var(--white); overflow: hidden; }
+        button { font: inherit; }
+
+        #loading-screen {
+            position: fixed; inset: 0; z-index: 10; display: grid; place-items: center;
+            background: #090b12; transition: opacity .7s ease, visibility .7s ease;
+        }
+        #loading-screen img { width: min(430px, 75vw); max-height: 75vh; object-fit: contain; }
+        #loading-screen.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .site { position: relative; width: 100%; height: 100svh; min-height: 600px; isolation: isolate; visibility: hidden; }
+        .site.is-visible { visibility: visible; }
+        .backdrop { position: absolute; inset: 0; z-index: -2; overflow: hidden; background: transparent; }
+        .backdrop img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+        .backdrop::after { content: none; }
+        .grain { display: none; }
+
+        .topbar { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: flex-end; padding: 28px clamp(24px, 5vw, 78px); }
+        .brand { display: flex; align-items: center; gap: 11px; color: white; font-size: 12px; font-weight: 900; letter-spacing: .22em; }
+        .brand-symbol { display: grid; place-items: center; width: 31px; height: 31px; background: var(--lime); color: #10130a; font-size: 17px; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+        .top-note { display: none; }
+
+        .landing { position: absolute; inset: 0; display: flex; align-items: end; justify-content: center; padding: 0 24px clamp(54px, 10vh, 100px); transition: opacity .45s ease, transform .45s ease; }
+        .landing.is-away { opacity: 0; transform: translateY(-10px); pointer-events: none; }
+        .intro { display: none; }
+        .kicker { display: flex; align-items: center; gap: 10px; color: var(--lime); font-size: 10px; font-weight: 800; letter-spacing: .25em; text-transform: uppercase; }
+        .kicker::before { content: ""; width: 30px; height: 1px; background: var(--lime); }
+        .intro h1 { margin: 21px 0 17px; font-size: clamp(43px, 5.6vw, 78px); line-height: 1.1; letter-spacing: -.055em; text-shadow: 0 4px 30px rgba(0,0,0,.25); }
+        .intro p { max-width: 400px; margin: 0; color: rgba(245,247,250,.77); font-size: 14px; line-height: 2; }
+        .scroll-cue { display: flex; align-items: center; gap: 13px; margin-top: 38px; color: rgba(255,255,255,.72); font-size: 9px; letter-spacing: .2em; }
+        .scroll-cue i { width: 45px; height: 1px; background: var(--lime); }
+
+        .menu-area { width: min(790px, 100%); }
+        .menu-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .menu-heading span:first-child { color: rgba(255,255,255,.84); font-size: 10px; font-weight: 800; letter-spacing: .2em; }
+        .menu-heading span:last-child { color: rgba(255,255,255,.56); font-size: 9px; letter-spacing: .16em; }
+        .menu-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+        .menu-card { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; overflow: hidden; border: 2px solid rgba(255,255,255,.78); border-radius: 0; background: transparent; color: white; text-align: left; cursor: pointer; box-shadow: 0 12px 36px rgba(0,0,0,.28); transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease; }
+        .menu-card:hover, .menu-card:focus-visible { z-index: 1; transform: translateY(-7px) scale(1.04); border-color: var(--lime); box-shadow: 0 16px 42px rgba(0,0,0,.4), 0 0 0 2px var(--lime); outline: none; }
+        .menu-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: transform .5s ease; }
+        .menu-card:hover img, .menu-card:focus-visible img { transform: scale(1.06); }
+        .menu-card::after { content: none; }
+        .menu-number, .menu-arrow, .menu-label small { display: none; }
+        .menu-label { display: none; }
+        .menu-label strong { display: block; font-size: clamp(11px, 1.15vw, 15px); letter-spacing: .04em; }
+        .menu-label small { display: block; margin-top: 5px; color: rgba(255,255,255,.7); font-size: 8px; letter-spacing: .15em; }
+        .menu-arrow { position: absolute; z-index: 1; top: 10px; right: 11px; color: white; font-size: 15px; }
+
+        .side-index { display: none; }
+        .side-index::before { content: ""; width: 1px; height: 52px; background: var(--lime); }
+        .footer-note { display: none; }
+
+        .detail { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(280px, .78fr) minmax(430px, 1.22fr); align-items: center; gap: 5vw; padding: 100px clamp(28px, 9vw, 145px) 70px; opacity: 0; visibility: hidden; transform: translateX(20px); transition: opacity .45s ease, transform .45s ease, visibility .45s; }
+        .detail.is-active { opacity: 1; visibility: visible; transform: translateX(0); }
+        .character-detail { grid-template-columns: 1fr; justify-items: center; gap: clamp(8px, 1.8vh, 16px); padding: 76px 24px 18px; }
+        .character-detail .character-stage { display: flex; align-items: center; justify-content: center; gap: clamp(18px, 4vw, 58px); width: 100%; perspective: 1800px; }
+        .character-frame { position: relative; display: grid; place-items: center; width: min(62vw, 760px, calc(100% - 152px)); height: min(55vh, 560px); min-height: 0; overflow: hidden; padding: clamp(10px, 1.6vw, 22px); border: 1px solid rgba(232, 218, 160, .9); background: linear-gradient(135deg, rgba(255,255,255,.22), transparent 16%, rgba(255,255,255,.04) 50%, rgba(0,0,0,.18)), rgba(13,16,23,.28); box-shadow: 0 20px 70px rgba(0,0,0,.38), inset 0 0 0 5px rgba(232,218,160,.12), inset 0 0 0 6px rgba(255,255,255,.35); }
+        .character-frame::before, .character-frame::after { content: "✦"; position: absolute; z-index: 2; display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid rgba(232,218,160,.75); border-radius: 50%; background: #171a20; color: #f2df9b; font-size: 11px; box-shadow: 0 0 16px rgba(232,218,160,.28); }
+        .character-frame::before { top: 8px; left: 8px; }
+        .character-frame::after { right: 8px; bottom: 8px; }
+        .character-frame .frame-corner { position: absolute; z-index: 2; width: 18px; height: 18px; border-color: rgba(232,218,160,.92); border-style: solid; }
+        .character-frame .frame-corner:nth-child(1) { top: 8px; right: 8px; border-width: 1px 1px 0 0; }
+        .character-frame .frame-corner:nth-child(2) { bottom: 8px; left: 8px; border-width: 0 0 1px 1px; }
+        .character-detail .character-portrait { display: block; width: 100%; height: 100%; min-width: 0; min-height: 0; max-width: 100%; max-height: 100%; object-fit: contain; transform-origin: left center; backface-visibility: hidden; }
+        .character-frame.is-turning-next .character-portrait { animation: character-slide-next .48s ease both; }
+        .character-frame.is-turning-prev .character-portrait { animation: character-slide-prev .48s ease both; }
+        @keyframes character-slide-next { 0% { opacity: 0; transform: translateX(34px); } 100% { opacity: 1; transform: translateX(0); } }
+        @keyframes character-slide-prev { 0% { opacity: 0; transform: translateX(-34px); } 100% { opacity: 1; transform: translateX(0); } }
+        .character-arrow { display: grid; place-items: center; width: 58px; height: 58px; border: 1px solid rgba(255,255,255,.8); background: rgba(0,0,0,.2); color: white; font-size: 28px; cursor: pointer; transition: background .2s, color .2s; }
+        .character-arrow:hover { background: var(--lime); color: #12160d; }
+        .character-picker { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .character-picker button { width: 44px; height: 44px; border: 1px solid rgba(255,255,255,.62); background: rgba(0,0,0,.22); color: white; font-size: 12px; cursor: pointer; }
+        .character-picker button[aria-pressed="true"], .character-picker button:hover { border-color: var(--lime); background: var(--lime); color: #12160d; }
+        .character-detail > .back-button { margin-top: 4px; padding: 10px 16px; border: 1px solid rgba(255,255,255,.72); background: rgba(0,0,0,.25); color: white; }
+        .character-detail > .back-button:hover { border-color: var(--lime); color: var(--lime); }
+        .game-board-detail { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 74px 24px 28px; }
+        .case-board { position: relative; width: min(78vw, 74vh, 920px); aspect-ratio: 1; flex: none; background: url("images/case.webp") center / contain no-repeat; }
+        .case-play-area { position: absolute; inset: 12% 10% 10.5% 10.5%; overflow: hidden; touch-action: none; cursor: crosshair; }
+        .rolling-ball { position: absolute; left: 50%; top: 50%; width: clamp(44px, 7vw, 88px); height: auto; transform: translate(-50%, -50%); filter: drop-shadow(0 8px 6px rgba(0,0,0,.28)); pointer-events: none; user-select: none; will-change: left, top, transform; }
+        .board-back { position: static; z-index: 3; flex: none; min-width: 190px; min-height: 72px; padding: 20px 26px; border: 2px solid #765238; border-radius: 999px; background: #d8bd9c; color: #000; font-size: clamp(44px, 5.2vw, 80px); font-weight: 800; letter-spacing: .04em; line-height: 1; text-align: center; box-shadow: 0 5px 0 #765238, 0 8px 16px rgba(0,0,0,.2); transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+        .board-back:hover { border-color: #765238; background: #ead5b8; color: #493421; transform: translateY(2px); box-shadow: 0 3px 0 #765238, 0 5px 12px rgba(0,0,0,.18); }
+        .board-back:active { transform: translateY(4px); box-shadow: 0 1px 0 #765238; }
+        .wallpaper-detail { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 48px 24px 28px; }
+        .wallpaper-image { display: block; width: min(88vw, 1200px); height: min(72vh, 760px); object-fit: contain; }
+        .wallpaper-back { min-width: 190px; min-height: 56px; padding: 12px 24px; border: 2px solid #765238; border-radius: 999px; background: #d8bd9c; color: #000; font-size: 22px; font-weight: 800; box-shadow: 0 4px 0 #765238, 0 7px 14px rgba(0,0,0,.2); }
+        .wallpaper-back:hover { background: #ead5b8; color: #000; }
+        .detail-copy { max-width: 460px; }
+        .detail-number { color: var(--lime); font-size: 12px; font-weight: 900; letter-spacing: .22em; }
+        .detail h2 { margin: 16px 0; font-size: clamp(38px, 5vw, 68px); line-height: 1.12; letter-spacing: -.045em; }
+        .detail p { color: rgba(245,247,250,.78); font-size: 14px; line-height: 2; }
+        .detail-actions { display: flex; align-items: center; gap: 22px; margin-top: 29px; }
+        .detail-link, .back-button { border: 0; padding: 13px 17px; background: var(--lime); color: #12160d; font-size: 11px; font-weight: 900; letter-spacing: .06em; cursor: pointer; }
+        .back-button { padding: 0; background: transparent; color: white; font-size: 10px; letter-spacing: .12em; }
+        .feature-image { position: relative; min-width: 0; }
+        .feature-image::before { content: ""; position: absolute; inset: 7% -3% -5% 6%; border: 1px solid rgba(200,255,77,.66); }
+        .feature-image img { position: relative; display: block; width: 100%; height: min(62vh, 540px); min-height: 320px; object-fit: cover; box-shadow: 0 30px 80px rgba(0,0,0,.42); }
+        .detail.is-active ~ .side-index { opacity: 0; }
+
+        @media (max-width: 900px) {
+            body { overflow: auto; }
+            .site { min-height: 850px; height: 100svh; }
+            .landing { align-items: end; padding: 0 30px 70px; }
+            .intro { display: none; }
+            .intro h1 { font-size: clamp(42px, 8vw, 68px); }
+            .intro p { max-width: 580px; }
+            .scroll-cue { margin-top: 20px; }
+            .menu-area { justify-self: stretch; max-width: none; }
+            .menu-grid { gap: 10px; }
+            .menu-card { aspect-ratio: .8; }
+            .side-index { display: none; }
+            .detail { grid-template-columns: 1fr; align-content: center; gap: 28px; padding: 95px 35px 65px; }
+            .detail-copy { max-width: 680px; }
+            .detail h2 { font-size: clamp(36px, 7vw, 58px); }
+            .feature-image img { height: min(34vh, 330px); min-height: 200px; }
+            .character-frame { width: min(calc(100vw - 180px), calc(100% - 152px)); height: min(44vh, 390px); }
+            .case-board { width: min(88vw, 72vh, 720px); }
+        }
+        @media (max-width: 560px) {
+            .site { min-height: 780px; }
+            .topbar { padding: 20px; }
+            .top-note { font-size: 8px; }
+            .landing { padding: 0 20px 58px; }
+            .intro h1 { margin: 14px 0; font-size: 42px; }
+            .intro p { font-size: 12px; }
+            .menu-heading span:last-child { font-size: 7px; }
+            .menu-grid { gap: 7px; }
+            .menu-card { aspect-ratio: .68; }
+            .menu-number { top: 8px; left: 8px; font-size: 9px; }
+            .menu-arrow { top: 7px; right: 7px; font-size: 12px; }
+            .menu-label { right: 6px; bottom: 9px; left: 7px; }
+            .menu-label strong { font-size: 10px; }
+            .menu-label small { font-size: 6px; }
+            .footer-note { bottom: 16px; left: 20px; font-size: 7px; }
+            .detail { padding: 85px 22px 55px; gap: 20px; }
+            .detail h2 { margin: 11px 0; font-size: 36px; }
+            .detail p { margin: 0; font-size: 12px; }
+            .detail-actions { margin-top: 18px; }
+            .feature-image img { min-height: 180px; }
+            .character-detail .character-stage { gap: 10px; }
+            .character-frame { width: calc(100% - 104px); height: min(38vh, 320px); min-height: 0; padding: 10px; }
+            .character-arrow { width: 42px; height: 42px; }
+            .case-board { width: min(94vw, 62vh); }
+            .game-board-detail { gap: 12px; padding: 72px 12px 24px; }
+        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+    </style>
+</head>
+<body>
+    <div id="loading-screen" aria-label="読み込み中"><img src="images/loading.GIF" alt="読み込み中"></div>
+
+    <main class="site" id="site">
+        <div class="backdrop" aria-hidden="true"><img src="images/backgrond.jpg" alt=""></div>
+        <div class="grain" aria-hidden="true"></div>
+        <header class="topbar">
+            <span class="top-note">A world made for play</span>
+        </header>
+
+        <section class="landing" id="landing" aria-label="メインメニュー">
+            <div class="intro">
+                <div class="kicker">Independent Game Studio</div>
+                <h1>物語の中へ、<br>飛び込もう。</h1>
+                <p>ここから、ゲームの世界が広がる。気になるメニューを選んで、INDIE FORGEの世界をお楽しみください。</p>
+                <div class="scroll-cue"><i></i> CHOOSE YOUR DESTINATION</div>
+            </div>
+            <div class="menu-area">
+                <div class="menu-heading" aria-hidden="true"></div>
+                <div class="menu-grid">
+                    <button class="menu-card" type="button" data-menu="0" aria-label="キャラ紹介"><img src="images/menu01.webp" alt=""><span class="menu-label"><strong>キャラ紹介</strong></span></button>
+                    <a class="menu-card" href="https://www.youtube.com/playlist?list=PLOLLthl9eMs8&amp;playnext=1&amp;index=1" target="_blank" rel="noopener noreferrer" aria-label="BGMプレイリストを新しいタブで開く"><img src="images/menu02.webp" alt=""><span class="menu-label"><strong>BGM</strong></span></a>
+                    <button class="menu-card" type="button" data-menu="2" aria-label="コロコロKS"><img src="images/menu03.webp" alt=""><span class="menu-label"><strong>コロコロKS</strong></span></button>
+                    <button class="menu-card" type="button" data-menu="3" aria-label="壁紙"><img src="images/menu04.webp" alt=""><span class="menu-label"><strong>壁紙</strong></span></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="detail character-detail" data-detail="0" aria-label="キャラクター紹介" aria-hidden="true">
+            <div class="character-stage">
+                <button class="character-arrow" type="button" data-character-step="-1" aria-label="前のキャラクター">‹</button>
+                <div class="character-frame" id="character-frame">
+                    <span class="frame-corner" aria-hidden="true"></span><span class="frame-corner" aria-hidden="true"></span>
+                    <img class="character-portrait" id="character-portrait" src="images/kazu01.jpg" alt="キャラクター01">
+                </div>
+                <button class="character-arrow" type="button" data-character-step="1" aria-label="次のキャラクター">›</button>
+            </div>
+            <div class="character-picker" aria-label="キャラクター選択">
+                <button type="button" data-character="0" aria-label="キャラクター01" aria-pressed="true">01</button>
+                <button type="button" data-character="1" aria-label="キャラクター02" aria-pressed="false">02</button>
+                <button type="button" data-character="2" aria-label="キャラクター03" aria-pressed="false">03</button>
+                <button type="button" data-character="3" aria-label="キャラクター04" aria-pressed="false">04</button>
+                <button type="button" data-character="4" aria-label="キャラクター05" aria-pressed="false">05</button>
+                <button type="button" data-character="5" aria-label="キャラクター06" aria-pressed="false">06</button>
+                <button type="button" data-character="6" aria-label="キャラクター07" aria-pressed="false">07</button>
+                <button type="button" data-character="7" aria-label="キャラクター08" aria-pressed="false">08</button>
+            </div>
+            <button class="back-button" type="button" data-character-back>← MENU</button>
+        </section>
+
+        <section class="detail" data-detail="1" aria-label="BGM">
+            <div class="detail-copy"><div class="detail-number">01 / OUR GAMES</div><h2>まだ見ぬ世界を<br>冒険しよう。</h2><p>INDIE FORGEが開発するオリジナルゲーム。未知の街を探索し、自分だけの物語を紡ぐアドベンチャー『PROJECT: NEON』を制作中です。</p><div class="detail-actions"><a class="detail-link" href="mailto:hello@indie-forge.example?subject=ゲームについて">ゲームについて ↗</a><button class="back-button" type="button">← MENU</button></div></div>
+            <div class="feature-image"><img src="images/IMG_3095.jpg" alt="開発中ゲームのビジュアル"></div>
+        </section>
+
+        <section class="detail game-board-detail" data-detail="2" aria-label="コロコロKS">
+            <div class="case-board" aria-label="コロコロKSのケース">
+                <div class="case-play-area" id="case-play-area" aria-label="ボールを転がすボード">
+                    <img class="rolling-ball" id="rolling-ball" src="images/ball.PNG" alt="転がるボール" draggable="false">
+                </div>
+            </div>
+            <button class="back-button board-back" type="button">← MENU</button>
+        </section>
+
+        <section class="detail wallpaper-detail" data-detail="3" aria-label="壁紙">
+            <img class="wallpaper-image" src="images/kabegami.webp" alt="壁紙">
+            <button class="back-button wallpaper-back" type="button">← メニューに戻る</button>
+        </section>
+
+        <section class="detail" data-detail="4" aria-label="その他">
+            <div class="detail-copy"><div class="detail-number">04 / CONTACT</div><h2>一緒にゲームを<br>つくりませんか？</h2><p>開発に関するお問い合わせ、協業のご相談などはこちらからご連絡ください。INDIE FORGEチームより折り返しご連絡します。</p><div class="detail-actions"><a class="detail-link" href="mailto:hello@indie-forge.example">メールでお問い合わせ ↗</a><button class="back-button" type="button">← MENU</button></div></div>
+            <div class="feature-image"><img src="images/menu04.webp" alt="お問い合わせのイメージ"></div>
+        </section>
+
+        <div class="side-index" aria-hidden="true">SCROLL TO EXPLORE</div>
+        <div class="footer-note">© 2026 INDIE FORGE　·　CRAFTED WITH IMAGINATION</div>
+    </main>
+
+    <script>
+        const loadingScreen = document.getElementById('loading-screen');
+        const site = document.getElementById('site');
+        const landing = document.getElementById('landing');
+        const details = [...document.querySelectorAll('.detail')];
+        const playArea = document.getElementById('case-play-area');
+        const rollingBall = document.getElementById('rolling-ball');
+        let ballPosition = { x: 50, y: 50 };
+        let ballTarget = { x: 50, y: 50 };
+        let ballRotation = 0;
+        let lastBallPosition = { x: 50, y: 50 };
+        let ballAnimationFrame = 0;
+
+        function setBallTarget(event) {
+            const bounds = playArea.getBoundingClientRect();
+            const ballRadiusX = rollingBall.offsetWidth / 2;
+            const ballRadiusY = rollingBall.offsetHeight / 2;
+            const safeWidth = Math.max(1, bounds.width - ballRadiusX * 2);
+            const safeHeight = Math.max(1, bounds.height - ballRadiusY * 2);
+            const x = Math.min(safeWidth, Math.max(0, event.clientX - bounds.left - ballRadiusX));
+            const y = Math.min(safeHeight, Math.max(0, event.clientY - bounds.top - ballRadiusY));
+            ballTarget = { x: 50 + (x / safeWidth - .5) * 100, y: 50 + (y / safeHeight - .5) * 100 };
+        }
+
+        function animateBall() {
+            ballPosition.x += (ballTarget.x - ballPosition.x) * .16;
+            ballPosition.y += (ballTarget.y - ballPosition.y) * .16;
+            const dx = ballPosition.x - lastBallPosition.x;
+            const dy = ballPosition.y - lastBallPosition.y;
+            ballRotation += Math.hypot(dx, dy) * 7;
+            rollingBall.style.left = `${ballPosition.x}%`;
+            rollingBall.style.top = `${ballPosition.y}%`;
+            rollingBall.style.transform = `translate(-50%, -50%) rotate(${ballRotation}deg)`;
+            lastBallPosition = { ...ballPosition };
+            ballAnimationFrame = requestAnimationFrame(animateBall);
+        }
+
+        playArea.addEventListener('pointermove', setBallTarget);
+        playArea.addEventListener('pointerdown', event => {
+            playArea.setPointerCapture(event.pointerId);
+            setBallTarget(event);
+        });
+        ballAnimationFrame = requestAnimationFrame(animateBall);
+
+        const characterImages = [
+            'images/kazu01.jpg', 'images/kazu02.jpg', 'images/kazu03.jpg', 'images/kazu04.jpg',
+            'images/kazu05.jpg', 'images/kazu06.jpg', 'images/kazu07.jpg', 'images/kazu08.jpg'
+        ];
+        let currentCharacter = 0;
+
+        function selectCharacter(index, direction = 1) {
+            currentCharacter = (index + characterImages.length) % characterImages.length;
+            const portrait = document.getElementById('character-portrait');
+            const frame = document.getElementById('character-frame');
+            frame.classList.remove('is-turning-next', 'is-turning-prev');
+            void portrait.offsetWidth;
+            portrait.src = characterImages[currentCharacter];
+            portrait.alt = `キャラクター${String(currentCharacter + 1).padStart(2, '0')}`;
+            frame.classList.add(direction < 0 ? 'is-turning-prev' : 'is-turning-next');
+            window.setTimeout(() => frame.classList.remove('is-turning-next', 'is-turning-prev'), 500);
+            document.querySelectorAll('[data-character]').forEach(button => {
+                button.setAttribute('aria-pressed', Number(button.dataset.character) === currentCharacter ? 'true' : 'false');
+            });
+        }
+
+        function openMenu(index) {
+            landing.classList.add('is-away');
+            details.forEach((detail, i) => {
+                detail.classList.toggle('is-active', i === index);
+                detail.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+            });
+        }
+
+        function showMenu() {
+            details.forEach(detail => {
+                detail.classList.remove('is-active');
+                detail.setAttribute('aria-hidden', 'true');
+            });
+            landing.classList.remove('is-away');
+        }
+
+        document.querySelectorAll('.menu-card[data-menu]').forEach(button => {
+            button.addEventListener('click', () => openMenu(Number(button.dataset.menu)));
+        });
+        document.querySelectorAll('[data-character]').forEach(button => button.addEventListener('click', () => selectCharacter(Number(button.dataset.character))));
+        document.querySelectorAll('[data-character-step]').forEach(button => button.addEventListener('click', () => {
+            const direction = Number(button.dataset.characterStep);
+            selectCharacter(currentCharacter + direction, direction);
+        }));
+        document.querySelector('[data-character-back]').addEventListener('click', showMenu);
+        document.querySelectorAll('.back-button').forEach(button => button.addEventListener('click', showMenu));
+        document.addEventListener('keydown', event => { if (event.key === 'Escape') showMenu(); });
+
+        window.addEventListener('load', () => {
+            window.setTimeout(() => {
+                site.classList.add('is-visible');
+                loadingScreen.classList.add('is-hidden');
+                window.setTimeout(() => loadingScreen.remove(), 750);
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

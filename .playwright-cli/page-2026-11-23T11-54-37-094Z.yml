@@ -1,0 +1,11 @@
+- main [ref=e4]:
+  - region "メインメニュー" [ref=e7]:
+    - generic [ref=e9]:
+      - button "キャラ紹介" [ref=e10] [cursor=pointer]:
+        - img "キャラ紹介" [ref=e11]
+      - button "キャラクター一覧" [ref=e12] [cursor=pointer]:
+        - img "キャラクター一覧" [ref=e13]
+      - button "メニュー03" [ref=e14] [cursor=pointer]:
+        - img "メニュー03" [ref=e15]
+      - button "メニュー04" [ref=e16] [cursor=pointer]:
+        - img "メニュー04" [ref=e17]

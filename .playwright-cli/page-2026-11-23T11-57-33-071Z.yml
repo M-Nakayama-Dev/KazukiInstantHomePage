@@ -1,0 +1,18 @@
+- main [ref=e4]:
+  - region "メインメニュー":
+    - generic:
+      - generic:
+        - button "キャラ紹介":
+          - img "キャラ紹介"
+        - button "キャラクター一覧":
+          - img "キャラクター一覧"
+        - button "メニュー03":
+          - img "メニュー03"
+        - button "メニュー04" [active]:
+          - img "メニュー04"
+  - region "ボール積み上げゲーム" [ref=e18]:
+    - generic [ref=e19]:
+      - heading "ボールを積み上げよう" [level=2] [ref=e20]
+      - button "← MENU" [ref=e21] [cursor=pointer]
+    - generic "ボール積み上げゲームの台" [ref=e22]:
+      - paragraph: タップした位置からボールが落ちます
