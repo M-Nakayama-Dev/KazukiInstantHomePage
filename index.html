@@ -68,9 +68,9 @@
 
         .detail { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(280px, .78fr) minmax(430px, 1.22fr); align-items: center; gap: 5vw; padding: 100px clamp(28px, 9vw, 145px) 70px; opacity: 0; visibility: hidden; transform: translateX(20px); transition: opacity .45s ease, transform .45s ease, visibility .45s; }
         .detail.is-active { opacity: 1; visibility: visible; transform: translateX(0); }
-        .character-detail { grid-template-columns: 1fr; justify-items: center; gap: 16px; padding-top: 82px; }
+        .character-detail { grid-template-columns: 1fr; justify-items: center; gap: clamp(8px, 1.8vh, 16px); padding: 76px 24px 18px; }
         .character-detail .character-stage { display: flex; align-items: center; justify-content: center; gap: clamp(18px, 4vw, 58px); width: 100%; perspective: 1800px; }
-        .character-frame { position: relative; display: grid; place-items: center; width: min(62vw, 1100px); height: min(65vh, 680px); min-height: 260px; padding: clamp(14px, 2vw, 28px); border: 1px solid rgba(232, 218, 160, .9); background: linear-gradient(135deg, rgba(255,255,255,.22), transparent 16%, rgba(255,255,255,.04) 50%, rgba(0,0,0,.18)), rgba(13,16,23,.28); box-shadow: 0 20px 70px rgba(0,0,0,.38), inset 0 0 0 5px rgba(232,218,160,.12), inset 0 0 0 6px rgba(255,255,255,.35); }
+        .character-frame { position: relative; display: grid; place-items: center; width: min(62vw, 760px, calc(100% - 152px)); height: min(55vh, 560px); min-height: 0; padding: clamp(10px, 1.6vw, 22px); border: 1px solid rgba(232, 218, 160, .9); background: linear-gradient(135deg, rgba(255,255,255,.22), transparent 16%, rgba(255,255,255,.04) 50%, rgba(0,0,0,.18)), rgba(13,16,23,.28); box-shadow: 0 20px 70px rgba(0,0,0,.38), inset 0 0 0 5px rgba(232,218,160,.12), inset 0 0 0 6px rgba(255,255,255,.35); }
         .character-frame::before, .character-frame::after { content: "✦"; position: absolute; z-index: 2; display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid rgba(232,218,160,.75); border-radius: 50%; background: #171a20; color: #f2df9b; font-size: 11px; box-shadow: 0 0 16px rgba(232,218,160,.28); }
         .character-frame::before { top: 8px; left: 8px; }
         .character-frame::after { right: 8px; bottom: 8px; }
@@ -90,7 +90,7 @@
         .character-detail > .back-button { margin-top: 4px; padding: 10px 16px; border: 1px solid rgba(255,255,255,.72); background: rgba(0,0,0,.25); color: white; }
         .character-detail > .back-button:hover { border-color: var(--lime); color: var(--lime); }
         .game-board-detail { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 74px 24px 28px; }
-        .case-board { position: relative; width: min(78vw, 74vh, 920px); aspect-ratio: 1; flex: none; background: url("images/case.PNG") center / contain no-repeat; }
+        .case-board { position: relative; width: min(78vw, 74vh, 920px); aspect-ratio: 1; flex: none; background: url("images/case.webp") center / contain no-repeat; }
         .case-play-area { position: absolute; inset: 12% 10% 10.5% 10.5%; overflow: hidden; touch-action: none; cursor: crosshair; }
         .rolling-ball { position: absolute; left: 50%; top: 50%; width: clamp(44px, 7vw, 88px); height: auto; transform: translate(-50%, -50%); filter: drop-shadow(0 8px 6px rgba(0,0,0,.28)); pointer-events: none; user-select: none; will-change: left, top, transform; }
         .board-back { position: static; z-index: 3; flex: none; min-width: 190px; min-height: 72px; padding: 20px 26px; border: 2px solid #765238; border-radius: 999px; background: #d8bd9c; color: #000; font-size: clamp(44px, 5.2vw, 80px); font-weight: 800; letter-spacing: .04em; line-height: 1; text-align: center; box-shadow: 0 5px 0 #765238, 0 8px 16px rgba(0,0,0,.2); transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
@@ -128,7 +128,7 @@
             .detail-copy { max-width: 680px; }
             .detail h2 { font-size: clamp(36px, 7vw, 58px); }
             .feature-image img { height: min(34vh, 330px); min-height: 200px; }
-            .character-frame { width: calc(100vw - 220px); height: min(52vh, 500px); }
+            .character-frame { width: min(calc(100vw - 180px), calc(100% - 152px)); height: min(44vh, 390px); }
             .case-board { width: min(88vw, 72vh, 720px); }
         }
         @media (max-width: 560px) {
@@ -153,7 +153,7 @@
             .detail-actions { margin-top: 18px; }
             .feature-image img { min-height: 180px; }
             .character-detail .character-stage { gap: 10px; }
-            .character-frame { width: calc(100vw - 128px); height: min(48vh, 420px); min-height: 180px; padding: 12px; }
+            .character-frame { width: calc(100% - 104px); height: min(38vh, 320px); min-height: 0; padding: 10px; }
             .character-arrow { width: 42px; height: 42px; }
             .case-board { width: min(94vw, 62vh); }
             .game-board-detail { gap: 12px; padding: 72px 12px 24px; }
@@ -165,7 +165,7 @@
     <div id="loading-screen" aria-label="読み込み中"><img src="images/loading.GIF" alt="読み込み中"></div>
 
     <main class="site" id="site">
-        <div class="backdrop" aria-hidden="true"><img src="images/backgrond.PNG" alt=""></div>
+        <div class="backdrop" aria-hidden="true"><img src="images/backgrond.jpg" alt=""></div>
         <div class="grain" aria-hidden="true"></div>
         <header class="topbar">
             <span class="top-note">A world made for play</span>
@@ -181,10 +181,10 @@
             <div class="menu-area">
                 <div class="menu-heading" aria-hidden="true"></div>
                 <div class="menu-grid">
-                    <button class="menu-card" type="button" data-menu="0" aria-label="キャラ紹介"><img src="images/menu01.PNG" alt=""><span class="menu-label"><strong>キャラ紹介</strong></span></button>
-                    <a class="menu-card" href="https://www.youtube.com/playlist?list=PLOLLthl9eMs8&amp;playnext=1&amp;index=1" target="_blank" rel="noopener noreferrer" aria-label="BGMプレイリストを新しいタブで開く"><img src="images/menu02.PNG" alt=""><span class="menu-label"><strong>BGM</strong></span></a>
-                    <button class="menu-card" type="button" data-menu="2" aria-label="コロコロKS"><img src="images/menu03.PNG" alt=""><span class="menu-label"><strong>コロコロKS</strong></span></button>
-                    <button class="menu-card" type="button" data-menu="3" aria-label="壁紙"><img src="images/menu04.PNG" alt=""><span class="menu-label"><strong>壁紙</strong></span></button>
+                    <button class="menu-card" type="button" data-menu="0" aria-label="キャラ紹介"><img src="images/menu01.webp" alt=""><span class="menu-label"><strong>キャラ紹介</strong></span></button>
+                    <a class="menu-card" href="https://www.youtube.com/playlist?list=PLOLLthl9eMs8&amp;playnext=1&amp;index=1" target="_blank" rel="noopener noreferrer" aria-label="BGMプレイリストを新しいタブで開く"><img src="images/menu02.webp" alt=""><span class="menu-label"><strong>BGM</strong></span></a>
+                    <button class="menu-card" type="button" data-menu="2" aria-label="コロコロKS"><img src="images/menu03.webp" alt=""><span class="menu-label"><strong>コロコロKS</strong></span></button>
+                    <button class="menu-card" type="button" data-menu="3" aria-label="壁紙"><img src="images/menu04.webp" alt=""><span class="menu-label"><strong>壁紙</strong></span></button>
                 </div>
             </div>
         </section>
@@ -194,7 +194,7 @@
                 <button class="character-arrow" type="button" data-character-step="-1" aria-label="前のキャラクター">‹</button>
                 <div class="character-frame" id="character-frame">
                     <span class="frame-corner" aria-hidden="true"></span><span class="frame-corner" aria-hidden="true"></span>
-                    <img class="character-portrait" id="character-portrait" src="images/kazu01.jpeg" alt="キャラクター01">
+                    <img class="character-portrait" id="character-portrait" src="images/kazu01.jpg" alt="キャラクター01">
                 </div>
                 <button class="character-arrow" type="button" data-character-step="1" aria-label="次のキャラクター">›</button>
             </div>
@@ -213,7 +213,7 @@
 
         <section class="detail" data-detail="1" aria-label="BGM">
             <div class="detail-copy"><div class="detail-number">01 / OUR GAMES</div><h2>まだ見ぬ世界を<br>冒険しよう。</h2><p>INDIE FORGEが開発するオリジナルゲーム。未知の街を探索し、自分だけの物語を紡ぐアドベンチャー『PROJECT: NEON』を制作中です。</p><div class="detail-actions"><a class="detail-link" href="mailto:hello@indie-forge.example?subject=ゲームについて">ゲームについて ↗</a><button class="back-button" type="button">← MENU</button></div></div>
-            <div class="feature-image"><img src="images/IMG_3095.PNG" alt="開発中ゲームのビジュアル"></div>
+            <div class="feature-image"><img src="images/IMG_3095.jpg" alt="開発中ゲームのビジュアル"></div>
         </section>
 
         <section class="detail game-board-detail" data-detail="2" aria-label="コロコロKS">
@@ -226,13 +226,13 @@
         </section>
 
         <section class="detail wallpaper-detail" data-detail="3" aria-label="壁紙">
-            <img class="wallpaper-image" src="images/kabegami.PNG" alt="壁紙">
+            <img class="wallpaper-image" src="images/kabegami.webp" alt="壁紙">
             <button class="back-button wallpaper-back" type="button">← メニューに戻る</button>
         </section>
 
         <section class="detail" data-detail="4" aria-label="その他">
             <div class="detail-copy"><div class="detail-number">04 / CONTACT</div><h2>一緒にゲームを<br>つくりませんか？</h2><p>開発に関するお問い合わせ、協業のご相談などはこちらからご連絡ください。INDIE FORGEチームより折り返しご連絡します。</p><div class="detail-actions"><a class="detail-link" href="mailto:hello@indie-forge.example">メールでお問い合わせ ↗</a><button class="back-button" type="button">← MENU</button></div></div>
-            <div class="feature-image"><img src="images/menu04.PNG" alt="お問い合わせのイメージ"></div>
+            <div class="feature-image"><img src="images/menu04.webp" alt="お問い合わせのイメージ"></div>
         </section>
 
         <div class="side-index" aria-hidden="true">SCROLL TO EXPLORE</div>
@@ -284,7 +284,7 @@
         ballAnimationFrame = requestAnimationFrame(animateBall);
 
         const characterImages = [
-            'images/kazu01.jpeg', 'images/kazu02.jpg', 'images/kazu03.jpg', 'images/kazu04.jpg',
+            'images/kazu01.jpg', 'images/kazu02.jpg', 'images/kazu03.jpg', 'images/kazu04.jpg',
             'images/kazu05.jpg', 'images/kazu06.jpg', 'images/kazu07.jpg', 'images/kazu08.jpg'
         ];
         let currentCharacter = 0;
